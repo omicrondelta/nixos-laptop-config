@@ -10,8 +10,9 @@
         "uhci_hcd"
         "ehci_pci"
         "ahci"
-        "btrfs"
       ];
+
+      checkJournalingFS = false;
 
       luks = {
         devices = [ 
@@ -24,11 +25,11 @@
 
  fileSystems = [
     { mountPoint = "/"; 
-      device = "/dev/disk/by-label/nix-root";
+      device = "/dev/disk/by-uuid/fe1c7711-3de1-4e7a-8e3d-aa984fc3d54e";
       fsType = "btrfs";
       options = "defaults,noatime,noacl,compress=lzo,inode_cache,space_cache,autodefrag,subvol=__ROOT"; }
     { mountPoint = "/home";
-      device = "/dev/disk/by-label/nix-root";
+      device = "/dev/disk/by-uuid/fe1c7711-3de1-4e7a-8e3d-aa984fc3d54e";
       fsType = "btrfs";
       options = "defaults,noatime,noacl,compress=lzo,inode_cache,space_cache,autodefrag,subvol=__HOME"; }
     { mountPoint = "/boot";
@@ -42,6 +43,12 @@
 
   nix = {
     maxJobs = 2;
+
+    gc = {
+      automatic = true;
+      dates = "12:00";
+      options = "-d";
+    };
   };
 }
 

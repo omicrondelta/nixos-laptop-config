@@ -1,10 +1,19 @@
-{ config, pkgs, ... }:
+{ config, pkgs, ... }: 
 
 {
   imports =
     [ 
       ./hardware-configuration.nix
     ];
+
+  nixpkgs = {
+    config = {
+      allowUnfree = true;
+      chromium = {
+        enableAdobeFlash = true;
+      };
+    };
+  };
 
   boot = {
     loader = {
@@ -21,6 +30,8 @@
       "quiet"
     ];
   };
+
+  boot.initrd.checkJournalingFS = false;
 
   networking = {
     hostName = "tartarus";
@@ -55,12 +66,33 @@
       export GTK2_RC_FILES=$GTK2_RC_FILES:${pkgs.oxygen_gtk}/share/themes/oxygen-gtk/gtk-2.0/gtkrc
     '';
 
-    systemPackages = [
-      pkgs.oxygen_gtk
+    systemPackages = with pkgs; [
+      oxygen_gtk
+      smartmontools
+      kde4.kdemultimedia
+      kde4.kdeaccessibility
+      kde4.kdeadmin
+      kde4.kdeartwork
+      kde4.kdebindings
+      kde4.kdeedu
+      kde4.kdegames
+      kde4.kdegraphics
+      kde4.kdelibs
+      kde4.kdenetwork
+      kde4.kdepim
+      kde4.kdesdk
+      kde4.kdetoys
+      kde4.kdeutils
     ];
   };
 
   services = {
+    nixosManual = {
+      enable = true;
+      showManual = true;
+       ttyNumber = "2";
+    };
+
     openssh = {
       enable = true;
     };
@@ -113,4 +145,23 @@
       enableCompletion = true;
     };
   };
+
+  fonts = {
+    enableFontDir = true;
+    fonts = with pkgs ; [
+       liberation_ttf
+       ttf_bitstream_vera
+       dejavu_fonts
+       terminus_font
+       bakoma_ttf
+    ];
+  };
+
+  ## Testing ##
+  services.mysql.package = pkgs.mariadb;
+  services.mysql.enable = true;
+
+  hardware.pulseaudio.enable = true;
+  services.acpid.enable = true;
+
 }
